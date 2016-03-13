@@ -1,0 +1,19 @@
+<div n:snippet n:class="'modal fade', $control->name" tabindex="-1" role="dialog" aria-labelledby="{$control->uniqueId}-label" data-onclose="{link close!}">
+	<div n:inner-block="modal" class="modal-dialog">
+		<div n:inner-block="content" class="modal-content">
+			<div class="modal-header">
+				<a href="#" class="close ajax" data-dismiss="modal" aria-label="{_frontend.modal.close}"><span class="fa fa-remove"></span></a>
+				{block header}<h3 id="{$control->uniqueId}-label" class="modal-title" n:inner-block="title"></h3>{/block}
+			</div>
+			<div n:inner-block="body" class="modal-body">
+				<div n:block="flashes" n:snippet="flashes" n:inner-foreach="$flashes as $message">
+					<div class="alert alert-{$message->type} alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="{_frontend.modal.close}"><span aria-hidden="true">&times;</span></button>
+						{_$message->message}
+					</div>
+				</div>
+			</div>
+			<div n:inner-block="footer" class="modal-footer"></div>
+		</div>
+	</div>
+</div>
