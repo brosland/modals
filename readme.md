@@ -27,7 +27,12 @@ abstract class BasePresenter extends \Nette\Application\UI\Presenter
 	}
 	// ...
 ```
+
 2. add placeholder for a modal to your base layout
-```html {snippet modal}{ifset $modal}{control $modal}{/ifset}{/snippet}```
+```html
+{snippet modal}{ifset $modal}{control $modal}{/ifset}{/snippet}
+```
+
 3. Copy `brosland.modals.js` to your directory with Javascript files (you can use [Bower](http://bower.io/) for this).
+
 4. Link the file in your templates (usually in `app/@layout.latte`, after jQuery!).
