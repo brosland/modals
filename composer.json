@@ -1,0 +1,22 @@
+{
+	"name": "brosland/modals",
+	"description": "The implementation of Bootstrap modals for Nette framework.",
+	"keywords": ["brosland", "modals", "bootstrap", "nette"],
+	"homepage": "http://bros.land",
+	"license": ["MIT"],
+	"authors": [
+		{
+			"name": "Martin Bros",
+			"email": "mbskot@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-0": {
+			"Brosland\\": "src/"
+		}
+	},
+	"require": {
+		"php": ">= 5.5",
+		"nette/nette": "~2.3"
+	}
+}
