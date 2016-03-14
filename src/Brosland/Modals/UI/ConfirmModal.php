@@ -1,6 +1,6 @@
 <?php
 
-namespace Brosland\Modals;
+namespace Brosland\Modals\UI;
 
 class ConfirmModal extends Modal
 {
@@ -12,7 +12,7 @@ class ConfirmModal extends Modal
 	/**
 	 * @var string|\Nette\Utils\Html
 	 */
-	private $title = 'frontend.confirmModal.confirmation', $content = NULL;
+	private $title = 'modals.confirmModal.confirmation', $content = NULL;
 
 
 	/**

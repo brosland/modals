@@ -1,6 +1,6 @@
 <?php
 
-namespace Brosland\Modals;
+namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control,
 	Nette\Application\UI\Presenter;
@@ -16,6 +16,10 @@ abstract class Modal extends Control
 	 * @var boolean
 	 */
 	private static $CLOSE_REQUIRED = FALSE;
+	/**
+	 * @var string
+	 */
+	public static $VERSION = 'v3';
 	/**
 	 * @var \Closure[]
 	 */
@@ -123,7 +127,7 @@ abstract class Modal extends Control
 
 	protected function beforeRender()
 	{
-		$this->template->setFile(__DIR__ . '/templates/Modal/default.latte');
+		$this->template->setFile(__DIR__ . '/templates/Modal/' . self::$VERSION . '.latte');
 	}
 
 	public function render()

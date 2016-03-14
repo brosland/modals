@@ -1,6 +1,6 @@
 <?php
 
-namespace Brosland\Modals;
+namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Presenter;
 
