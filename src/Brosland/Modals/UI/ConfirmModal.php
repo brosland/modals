@@ -12,7 +12,7 @@ class ConfirmModal extends Modal
 	/**
 	 * @var string|\Nette\Utils\Html
 	 */
-	private $title = 'modals.confirmModal.confirmation', $content = NULL;
+	private $title = 'brosland.modals.confirmModal.confirmation', $content = NULL;
 
 
 	/**
