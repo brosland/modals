@@ -3,7 +3,8 @@
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control,
-	Nette\Application\UI\Presenter;
+	Nette\Application\UI\Presenter,
+	Nette\Utils\Html;
 
 abstract class Modal extends Control
 {
@@ -33,6 +34,10 @@ abstract class Modal extends Control
 	 * @var boolean
 	 */
 	private $openRequired = FALSE;
+	/**
+	 * @var Html
+	 */
+	private $elementPrototype = NULL;
 
 
 	/**
@@ -90,6 +95,19 @@ abstract class Modal extends Control
 		return $this;
 	}
 
+	/**
+	 * @return Html
+	 */
+	public function getElementPrototype()
+	{
+		if ($this->elementPrototype === NULL)
+		{
+			$this->elementPrototype = Html::el('div');
+		}
+
+		return $this->elementPrototype;
+	}
+
 	public function handleClose()
 	{
 		$this->setVisible(FALSE);
@@ -127,6 +145,16 @@ abstract class Modal extends Control
 
 	protected function beforeRender()
 	{
+		$elementPrototype = $this->getElementPrototype();
+		$elementPrototype->class[] = 'modal fade';
+		$elementPrototype->addAttributes([
+			'tabindex' => -1,
+			'role' => 'dialog',
+			'aria-labelledby' => $this->getUniqueId() . '-label',
+			'data-onclose' => $this->link('close!')
+		]);
+
+		$this->template->elementPrototype = $elementPrototype;
 		$this->template->setFile(__DIR__ . '/templates/Modal/' . self::$VERSION . '.latte');
 	}
 

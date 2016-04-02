@@ -1,4 +1,5 @@
-<div n:snippet n:class="'modal fade', $control->name" tabindex="-1" role="dialog" aria-labelledby="{$control->uniqueId}-label" data-onclose="{link close!}">
+{snippet}
+{!$elementPrototype->startTag()}
 	<div n:inner-block="modal" class="modal-dialog">
 		<div n:inner-block="content" class="modal-content">
 			<div n:inner-block="header" class="modal-header">
@@ -16,4 +17,5 @@
 			<div n:ifset="#footer" class="modal-footer">{include #footer}</div>
 		</div>
 	</div>
-</div>
+{!$elementPrototype->endTag()}
+{/snippet}
