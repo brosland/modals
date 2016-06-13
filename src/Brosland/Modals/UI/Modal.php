@@ -115,17 +115,6 @@ abstract class Modal extends Control
 	}
 
 	/**
-	 * Forces control or its snippet to repaint.
-	 * @return void
-	 */
-	public function redrawControl($snippet = NULL, $redraw = TRUE)
-	{
-		parent::redrawControl($snippet, $redraw);
-
-		$this->setVisible(TRUE);
-	}
-
-	/**
 	 * @param IComponent $component
 	 */
 	protected function attached($component)
