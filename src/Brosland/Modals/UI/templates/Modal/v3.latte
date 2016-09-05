@@ -1,5 +1,5 @@
 {snippet}
-{!$elementPrototype->startTag()}
+{$elementPrototype->startTag()|noescape}
 	<div n:inner-block="modal" class="modal-dialog">
 		<div n:inner-block="content" class="modal-content">
 			<div n:inner-block="header" class="modal-header">
@@ -17,5 +17,5 @@
 			<div n:ifset="#footer" class="modal-footer">{include #footer}</div>
 		</div>
 	</div>
-{!$elementPrototype->endTag()}
+{$elementPrototype->endTag()|noescape}
 {/snippet}

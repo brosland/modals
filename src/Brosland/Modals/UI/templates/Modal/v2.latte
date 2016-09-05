@@ -1,5 +1,5 @@
 {snippet}
-{!$elementPrototype->startTag()}
+{$elementPrototype->startTag()|noescape}
 	{block modal}
 		<div n:inner-block="header" class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -15,5 +15,5 @@
 		</div>
 		<div n:ifset="#footer" class="modal-footer">{include #footer}</div>
 	{/block}
-{!$elementPrototype->endTag()}
+{$elementPrototype->endTag()|noescape}
 {/snippet}
