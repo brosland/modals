@@ -1,5 +1,5 @@
 (function ($, undefined) {
-	$.nette.ext('bootstrap', {
+	$.nette.ext('brosland.modals', {
 		init: function () {
 			this.open($('body'));
 		},
