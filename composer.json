@@ -11,9 +11,7 @@
 		}
 	],
 	"autoload": {
-		"psr-0": {
-			"Brosland\\": "src/"
-		}
+		"classmap": ["src/"]
 	},
 	"require": {
 		"php": ">= 5.5",
