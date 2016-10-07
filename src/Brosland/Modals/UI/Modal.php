@@ -22,7 +22,7 @@ abstract class Modal extends Control
 	 */
 	public static $VERSION = 'v3';
 	/**
-	 * @var \Closure[]
+	 * @var callable[]
 	 */
 	public $onClose = [];
 	/**

@@ -2,21 +2,27 @@
 
 namespace Brosland\Modals\UI;
 
-class ConfirmModal extends Modal
+use Nette\Utils\Html;
+
+class ConfirmationModal extends Modal
 {
 
 	/**
-	 * @var \Closure[]
+	 * @var callable[]
 	 */
 	public $onConfirmed = [];
 	/**
-	 * @var string|\Nette\Utils\Html
+	 * @var string|Html
 	 */
-	private $title = 'brosland.modals.confirmModal.confirmation', $content = NULL;
+	private $title = 'brosland.modals.confirmationModal.confirmation';
+	/**
+	 * @var string|Html
+	 */
+	private $content = NULL;
 
 
 	/**
-	 * @param string|\Nette\Utils\Html $title
+	 * @param string|Html $title
 	 * @return self
 	 */
 	public function setTitle($title)
@@ -27,7 +33,7 @@ class ConfirmModal extends Modal
 	}
 
 	/**
-	 * @param string|\Nette\Utils\Html $content
+	 * @param string|Html $content
 	 * @return self
 	 */
 	public function setContent($content)
@@ -51,4 +57,13 @@ class ConfirmModal extends Modal
 		$this->template->parentTemplate = $this->template->getFile();
 		$this->template->setFile(__DIR__ . '/templates/ConfirmModal/default.latte');
 	}
+}
+
+interface IConfirmationModalFactory
+{
+
+	/**
+	 * @return ConfirmationModal
+	 */
+	function create();
 }

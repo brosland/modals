@@ -2,9 +2,11 @@
 
 namespace Brosland\Modals\DI;
 
-use Nette\PhpGenerator\ClassType;
+use Brosland\Modals\UI\Modal,
+	Nette\DI\CompilerExtension,
+	Nette\Reflection\ClassType;
 
-class ModalsExtension extends \Nette\DI\CompilerExtension
+class ModalsExtension extends CompilerExtension
 {
 
 	/**
@@ -25,6 +27,6 @@ class ModalsExtension extends \Nette\DI\CompilerExtension
 		$config = $this->getConfig($this->defaults);
 
 		$initialize = $class->methods['initialize'];
-		$initialize->addBody(\Brosland\Modals\UI\Modal::class . '::$VERSION = ?;', [$config['version']]);
+		$initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
 	}
 }
