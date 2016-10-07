@@ -55,7 +55,7 @@ class ConfirmationModal extends Modal
 		$this->template->title = $this->title;
 		$this->template->content = $this->content;
 		$this->template->parentTemplate = $this->template->getFile();
-		$this->template->setFile(__DIR__ . '/templates/ConfirmModal/default.latte');
+		$this->template->setFile(__DIR__ . '/templates/ConfirmationModal/default.latte');
 	}
 }
 
