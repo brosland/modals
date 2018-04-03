@@ -5,6 +5,7 @@
 {block body}
 	{include #parent}
 	<p>{ifset $content}{if is_string($content)}{_$content}{else}{$content}{/if}{/ifset}</p>
+	<hr>
 	<div class="text-right">
 		<div class="clearfix">
 			<a class="btn btn-default" data-dismiss="modal">{_brosland.modals.confirmationModal.cancel}</a>

@@ -14,7 +14,7 @@ class ConfirmationModal extends Modal
 	/**
 	 * @var string|Html
 	 */
-	private $title = 'brosland.modals.confirmationModal.confirmation';
+	private $title = 'brosland.modals.ui.confirmationModal.confirmation';
 	/**
 	 * @var string|Html
 	 */
