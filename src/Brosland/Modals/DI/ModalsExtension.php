@@ -2,9 +2,9 @@
 
 namespace Brosland\Modals\DI;
 
-use Brosland\Modals\UI\Modal,
-	Nette\DI\CompilerExtension,
-	Nette\Reflection\ClassType;
+use Brosland\Modals\UI\Modal;
+use Nette\DI\CompilerExtension;
+use Nette\PhpGenerator\ClassType;
 
 class ModalsExtension extends CompilerExtension
 {
@@ -13,7 +13,7 @@ class ModalsExtension extends CompilerExtension
 	 * @var array
 	 */
 	private $defaults = [
-		'version' => 'v3'
+			'version' => 'v3'
 	];
 
 
