@@ -11,9 +11,7 @@
 		}
 	],
 	"autoload": {
-		"psr-4": {
-			"Brosland\\Modals\\": ["src/Brosland/Modals"]
-		}
+		"classmap": ["src/"]
 	},
 	"require": {
 		"php": ">= 5.6",
