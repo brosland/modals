@@ -17,7 +17,7 @@ $ composer require brosland/modals
 ```php
 abstract class BasePresenter extends \Nette\Application\UI\Presenter
 {
-	use \Brosland\Modals\ModalTrait;
+	use \Brosland\Modals\UI\ModalTrait;
 
 	protected function beforeRender()
 	{
