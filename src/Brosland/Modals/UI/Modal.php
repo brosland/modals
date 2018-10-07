@@ -1,156 +1,112 @@
 <?php
+declare(strict_types=1);
 
 namespace Brosland\Modals\UI;
 
-use Nette\Application\UI\Control,
-	Nette\Application\UI\Presenter,
-	Nette\Utils\Html;
+use Nette\Application\UI\Control;
+use Nette\Application\UI\Presenter;
 
+/**
+ * @method onClose(self $modal): void
+ */
 abstract class Modal extends Control
 {
+    private const COOKIE_ACTIVE_MODAL = 'brosland_modals__active_modal';
 
-	/**
-	 * @var Modal
-	 */
-	private static $ACTIVE_MODAL = NULL;
-	/**
-	 * @var boolean
-	 */
-	private static $CLOSE_REQUIRED = FALSE;
-	/**
-	 * @var string
-	 */
-	public static $VERSION = 'v3';
-	/**
-	 * @var callable[]
-	 */
-	public $onClose = [];
-	/**
-	 * @persistent
-	 * @var boolean
-	 */
-	public $visible = FALSE;
-	/**
-	 * @var boolean
-	 */
-	private $openRequired = FALSE;
-	/**
-	 * @var Html
-	 */
-	private $elementPrototype = NULL;
+    /**
+     * @var string
+     */
+    public static $VERSION = 'v4';
+    /**
+     * @var bool
+     */
+    private static $INITIALIZED = false;
+    /**
+     * @var null|Modal
+     */
+    private static $ACTIVE_MODAL;
+    /**
+     * @var callable[]
+     */
+    public $onClose = [];
+    /**
+     * @var bool
+     */
+    private $openRequired = false;
 
 
-	/**
-	 * @return Modal
-	 */
-	public static function getActiveModal()
-	{
-		return self::$ACTIVE_MODAL;
-	}
+    public static function getActiveModal(Presenter $presenter): ?Modal
+    {
+        if (!self::$INITIALIZED) {
+            $httpRequest = $presenter->getHttpRequest();
+            $activeModalId = $httpRequest->getCookie(self::COOKIE_ACTIVE_MODAL);
 
-	/**
-	 * @return boolean
-	 */
-	public static function isCloseRequired()
-	{
-		return self::$CLOSE_REQUIRED;
-	}
+            if ($activeModalId !== null) {
+                $control = $presenter->getComponent($activeModalId, false);
 
-	/**
-	 * @return boolean
-	 */
-	public function isOpenRequired()
-	{
-		return $this->openRequired;
-	}
+                if ($control instanceof Modal) {
+                    self::$ACTIVE_MODAL = $control;
+                }
+            }
 
-	/**
-	 * @param boolean $visible
-	 * @return self
-	 */
-	public function setVisible($visible = TRUE, $openRequired = FALSE)
-	{
-		if ($visible)
-		{
-			if (self::$ACTIVE_MODAL !== NULL && self::$ACTIVE_MODAL !== $this)
-			{
-				self::$ACTIVE_MODAL->setVisible(FALSE);
-			}
+            self::$INITIALIZED = true;
+        }
 
-			self::$ACTIVE_MODAL = $this;
-		}
-		else
-		{
-			if (self::$ACTIVE_MODAL == $this)
-			{
-				self::$ACTIVE_MODAL = NULL;
-			}
+        return self::$ACTIVE_MODAL;
+    }
 
-			self::$CLOSE_REQUIRED = TRUE;
-		}
+    public function isActive(): bool
+    {
+        return self::getActiveModal($this->presenter) === $this;
+    }
 
-		$this->visible = $visible;
-		$this->openRequired = $openRequired;
+    public function isOpenRequired(): bool
+    {
+        return $this->openRequired;
+    }
 
-		return $this;
-	}
+    public function open(): void
+    {
+        $activeModal = self::getActiveModal($this->presenter);
 
-	/**
-	 * @return Html
-	 */
-	public function getElementPrototype()
-	{
-		if ($this->elementPrototype === NULL)
-		{
-			$this->elementPrototype = Html::el('div');
-		}
+        if ($activeModal !== $this && $activeModal !== null) {
+            $activeModal->close();
+        }
 
-		return $this->elementPrototype;
-	}
+        self::$ACTIVE_MODAL = $this;
 
-	public function handleClose()
-	{
-		$this->setVisible(FALSE);
-		$this->onClose($this);
-	}
+        $this->openRequired = true;
 
-	/**
-	 * @param IComponent $component
-	 */
-	protected function attached($component)
-	{
-		parent::attached($component);
+        $httpResponse = $this->presenter->getHttpResponse();
+        $httpResponse->setCookie(self::COOKIE_ACTIVE_MODAL, $this->getUniqueId(), '1 days');
+    }
 
-		if (!$component instanceof Presenter)
-		{
-			return;
-		}
+    public function close(): void
+    {
+        if (self::getActiveModal($this->presenter) === $this) {
+            self::$ACTIVE_MODAL = null;
 
-		if ($this->visible)
-		{
-			self::$ACTIVE_MODAL = $this;
-		}
-	}
+            $this->openRequired = false;
 
-	protected function beforeRender()
-	{
-		$elementPrototype = $this->getElementPrototype();
-		$elementPrototype->class[] = 'modal fade';
-		$elementPrototype->addAttributes([
-			'tabindex' => -1,
-			'role' => 'dialog',
-			'aria-labelledby' => $this->getUniqueId() . '-label',
-			'data-onclose' => $this->link('close!')
-		]);
+            $httpResponse = $this->presenter->getHttpResponse();
+            $httpResponse->deleteCookie(self::COOKIE_ACTIVE_MODAL);
 
-		$this->template->elementPrototype = $elementPrototype;
-		$this->template->setFile(__DIR__ . '/templates/Modal/' . self::$VERSION . '.latte');
-	}
+            if ($this->presenter->isAjax()) {
+                $this->presenter->getPayload()->closeModal = true;
+            }
 
-	public function render()
-	{
-		$this->beforeRender();
+            $this->onClose($this);
+        }
+    }
 
-		$this->template->render();
-	}
+    public function handleClose(): void
+    {
+        $this->close();
+    }
+
+    public function render(): void
+    {
+        $this->template->setFile(__DIR__ . '/Modal.' . self::$VERSION . '.latte');
+        $this->template->modalTemplate = $this->template->getFile();
+    }
 }

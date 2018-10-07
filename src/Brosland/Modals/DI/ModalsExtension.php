@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Brosland\Modals\DI;
 
@@ -6,21 +7,17 @@ use Brosland\Modals\UI\Modal;
 use Nette\DI\CompilerExtension;
 use Nette\PhpGenerator\ClassType;
 
-class ModalsExtension extends CompilerExtension
+final class ModalsExtension extends CompilerExtension
 {
-
 	/**
 	 * @var array
 	 */
 	private $defaults = [
-			'version' => 'v3'
+			'version' => 'v4'
 	];
 
 
-	/**
-	 * @param ClassType $class
-	 */
-	public function afterCompile(ClassType $class)
+	public function afterCompile(ClassType $class): void
 	{
 		parent::afterCompile($class);
 

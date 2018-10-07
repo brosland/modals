@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Brosland\Modals\UI;
 
@@ -6,24 +7,13 @@ use Nette\Application\UI\Presenter;
 
 trait ModalTrait
 {
+    public function updateModal(Presenter $presenter): void
+    {
+        $presenter->getTemplate()->modal = $activeModal = Modal::getActiveModal($presenter);
 
-	/**
-	 * @param Presenter $presenter
-	 */
-	public function updateModal(Presenter $presenter)
-	{
-		$presenter->getTemplate()->modal = $activeModal = Modal::getActiveModal();
-
-		if ($presenter->isAjax())
-		{
-			// close the previous modal
-			if (Modal::isCloseRequired())
-			{
-				$presenter->getPayload()->closeModal = TRUE;
-			}
-
-			$redrawModal = ($activeModal && $activeModal->isOpenRequired()) || Modal::isCloseRequired();
-			$presenter->redrawControl('modal', $redrawModal);
-		}
-	}
+        if ($presenter->isAjax()) {
+            $redrawModal = $activeModal !== null && $activeModal->isOpenRequired();
+            $presenter->redrawControl('modal', $redrawModal);
+        }
+    }
 }

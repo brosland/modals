@@ -1,0 +1,15 @@
+{extends $modalTemplate}
+
+{block title}{_$title}{/block}
+
+{block body}
+	{include #parent}
+	<form n:name="form" class="ajax pt-3">
+		<p>{_$question}</p>
+		<hr>
+		<div class="text-right">
+			{input cancel, class => 'btn btn-light mr-1', data-dismiss => '$modal'}
+			{input confirm, class => 'btn btn-primary'}
+		</div>
+	</form>
+{/block}
