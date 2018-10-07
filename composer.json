@@ -6,9 +6,7 @@
 	"license": ["MIT"],
 	"authors": [],
 	"autoload": {
-		"psr-4": {
-			"Brosland\\Modals\\": ["src/Brosland/Modals"]
-		}
+		"classmap": ["src/"]
 	},
 	"require": {
 		"php": ">= 7.1",
