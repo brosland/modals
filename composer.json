@@ -1,5 +1,6 @@
 {
 	"name": "brosland/modals",
+	"type": "library",
 	"description": "The implementation of Bootstrap modals for Nette framework.",
 	"keywords": ["brosland", "modals", "bootstrap", "nette"],
 	"homepage": "http://bros.land",
