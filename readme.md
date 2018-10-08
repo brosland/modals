@@ -33,7 +33,7 @@ extensions:
 
 ```php
 use Brosland\Modals\UI\ModalManager;
-use Brosland\Modals\UI\ModalManagerTrait
+use Brosland\Modals\UI\ModalManagerTrait;
 use Nette\Application\UI\Presenter;
 
 abstract class BasePresenter extends Presenter implements ModalManager
@@ -51,7 +51,7 @@ abstract class BasePresenter extends Presenter implements ModalManager
 	{
 		parent::beforeRender();
 
-		$this->updateModal($this);
+		$this->updateModal();
 	}
 
 	// ...
