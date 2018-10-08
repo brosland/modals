@@ -37,7 +37,7 @@ trait ModalManagerTrait
         }
 
         $httpRequest = $this->getPresenter()->getHttpRequest();
-        $activeModalId = $httpRequest->getCookie(self::$COOKIE_PREFIX . $this->modal);
+        $activeModalId = (string)$httpRequest->getCookie(self::$COOKIE_PREFIX . $this->modal);
 
         try {
             $control = $this->getPresenter()->getComponent($activeModalId);
