@@ -4,27 +4,16 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Presenter;
 
 /**
  * @method onClose(self $modal): void
  */
 abstract class Modal extends Control
 {
-    private const COOKIE_ACTIVE_MODAL = 'brosland_modals__active_modal';
-
     /**
      * @var string
      */
     public static $VERSION = 'v4';
-    /**
-     * @var bool
-     */
-    private static $INITIALIZED = false;
-    /**
-     * @var null|Modal
-     */
-    private static $ACTIVE_MODAL;
     /**
      * @var callable[]
      */
@@ -35,29 +24,9 @@ abstract class Modal extends Control
     private $openRequired = false;
 
 
-    public static function getActiveModal(Presenter $presenter): ?Modal
-    {
-        if (!self::$INITIALIZED) {
-            $httpRequest = $presenter->getHttpRequest();
-            $activeModalId = $httpRequest->getCookie(self::COOKIE_ACTIVE_MODAL);
-
-            if ($activeModalId !== null) {
-                $control = $presenter->getComponent($activeModalId, false);
-
-                if ($control instanceof Modal) {
-                    self::$ACTIVE_MODAL = $control;
-                }
-            }
-
-            self::$INITIALIZED = true;
-        }
-
-        return self::$ACTIVE_MODAL;
-    }
-
     public function isActive(): bool
     {
-        return self::getActiveModal($this->presenter) === $this;
+        return $this->getModalManager()->getActiveModal() === $this;
     }
 
     public function isOpenRequired(): bool
@@ -67,29 +36,26 @@ abstract class Modal extends Control
 
     public function open(): void
     {
-        $activeModal = self::getActiveModal($this->presenter);
+        $modalManager = $this->getModalManager();
+        $activeModal = $modalManager->getActiveModal();
 
         if ($activeModal !== $this && $activeModal !== null) {
             $activeModal->close();
         }
 
-        self::$ACTIVE_MODAL = $this;
+        $modalManager->setActiveModal($this);
 
         $this->openRequired = true;
-
-        $httpResponse = $this->presenter->getHttpResponse();
-        $httpResponse->setCookie(self::COOKIE_ACTIVE_MODAL, $this->getUniqueId(), '1 days');
     }
 
     public function close(): void
     {
-        if (self::getActiveModal($this->presenter) === $this) {
-            self::$ACTIVE_MODAL = null;
+        $modalManager = $this->getModalManager();
+
+        if ($modalManager->getActiveModal() === $this) {
+            $modalManager->setActiveModal(null);
 
             $this->openRequired = false;
-
-            $httpResponse = $this->presenter->getHttpResponse();
-            $httpResponse->deleteCookie(self::COOKIE_ACTIVE_MODAL);
 
             if ($this->presenter->isAjax()) {
                 $this->presenter->getPayload()->closeModal = true;
@@ -108,5 +74,13 @@ abstract class Modal extends Control
     {
         $this->template->setFile(__DIR__ . '/Modal.' . self::$VERSION . '.latte');
         $this->template->modalTemplate = $this->template->getFile();
+    }
+
+    private function getModalManager(): ModalManager
+    {
+        /** @var ModalManager $control */
+        $control = $this->lookup(ModalManager::class);
+
+        return $control;
     }
 }
