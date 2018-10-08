@@ -45,4 +45,4 @@ Else you can continue to the next step.
 
 
 ### Example
-You can find example code [here](https://github.com/brosland/modals-test).
+You can find example code [here](https://github.com/brosland/modals-test/tree/v2.0).
