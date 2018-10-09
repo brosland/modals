@@ -6,7 +6,7 @@ namespace Brosland\Modals\UI\Confirmation;
 use Brosland\Modals\UI\Modal;
 
 /**
- * @method onConfirm(self $modal): void
+ * @method void onConfirm(self $modal)
  */
 class ConfirmationModal extends Modal
 {

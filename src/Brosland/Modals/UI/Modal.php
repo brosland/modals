@@ -6,7 +6,7 @@ namespace Brosland\Modals\UI;
 use Nette\Application\UI\Control;
 
 /**
- * @method onClose(self $modal): void
+ * @method void onClose(self $modal)
  */
 abstract class Modal extends Control
 {
@@ -59,6 +59,8 @@ abstract class Modal extends Control
 
             if ($this->presenter->isAjax()) {
                 $this->presenter->getPayload()->closeModal = true;
+                $this->presenter->getPayload()->postGet = true;
+                $this->presenter->getPayload()->url = $this->link('this');
             }
 
             $this->onClose($this);

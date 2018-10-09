@@ -45,7 +45,8 @@ export default class Brosland_ModalsNajaExtension {
 				Naja.makeRequest(
 					'GET',
 					$modal.data('on-close-url'),
-					{'unique': false}
+					null,
+					{'unique': false, 'history': true}
 				);
 			}
 		});
