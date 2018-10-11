@@ -13,7 +13,11 @@ trait ModalManagerTrait
      * @persistent
      * @var null|string
      */
-    public $modal;
+    public $modal = null;
+    /**
+     * @var bool
+     */
+    private $initialized = false;
     /**
      * @var null|Modal
      */
@@ -30,35 +34,21 @@ trait ModalManagerTrait
      */
     abstract function getPresenter($throw = true);
 
-    public function initModal(): void
-    {
-        if ($this->modal === null) {
-            return;
-        }
-
-        $httpRequest = $this->getPresenter()->getHttpRequest();
-        $activeModalId = (string)$httpRequest->getCookie(self::$COOKIE_PREFIX . $this->modal);
-
-        try {
-            $control = $this->getPresenter()->getComponent($activeModalId);
-
-            if (!$control instanceof Modal) {
-                throw new InvalidArgumentException();
-            }
-
-            $this->activeModal = $control;
-        } catch (InvalidArgumentException $e) {
-            $this->setActiveModal(null);
-        }
-    }
-
     public function getActiveModal(): ?Modal
     {
+        if (!$this->initialized) {
+            $this->init();
+        }
+
         return $this->activeModal;
     }
 
     public function setActiveModal(Modal $modal = null): void
     {
+        if (!$this->initialized) {
+            $this->init();
+        }
+
         $httpResponse = $this->getPresenter()->getHttpResponse();
 
         if ($this->modal !== null) {
@@ -82,6 +72,10 @@ trait ModalManagerTrait
 
     public function updateModal(): void
     {
+        if (!$this->initialized) {
+            $this->init();
+        }
+
         $this->getPresenter()->getTemplate()->modal = $this->activeModal;
 
         if ($this->getPresenter()->isAjax()) {
@@ -89,6 +83,30 @@ trait ModalManagerTrait
                 $this->activeModal->isOpenRequired();
 
             $this->getPresenter()->redrawControl('modal', $redrawModal);
+        }
+    }
+
+    private function init(): void
+    {
+        $this->initialized = true;
+
+        if ($this->modal === null) {
+            return;
+        }
+
+        $httpRequest = $this->getPresenter()->getHttpRequest();
+        $activeModalId = (string)$httpRequest->getCookie(self::$COOKIE_PREFIX . $this->modal);
+
+        try {
+            $control = $this->getPresenter()->getComponent($activeModalId);
+
+            if (!$control instanceof Modal) {
+                throw new InvalidArgumentException();
+            }
+
+            $this->activeModal = $control;
+        } catch (InvalidArgumentException $e) {
+            $this->setActiveModal(null);
         }
     }
 }

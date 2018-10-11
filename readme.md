@@ -28,7 +28,6 @@ extensions:
 2\.	Setup `ModalManager`: the best practice is to do it in your base presenter.
 - add `ModalManagerTrait`
 - implement interface `ModalManager`
-- add startup callback for initialization of the modal manager
 - add update of modal into the method ```beforeRender```
 
 ```php
@@ -40,13 +39,6 @@ abstract class BasePresenter extends Presenter implements ModalManager
 {
 	use ModalManagerTrait;
 
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->onStartup[] = [$this, 'initModal']
-	}
-	
 	protected function beforeRender(): void
 	{
 		parent::beforeRender();

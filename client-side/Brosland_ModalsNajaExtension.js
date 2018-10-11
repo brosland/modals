@@ -7,7 +7,8 @@ export default class Brosland_ModalsNajaExtension {
 
 		naja.addEventListener('init', this.init.bind(this));
 		naja.addEventListener('success', (event) => {
-			if (event.response['closeModal'] != null && this.$modal != null) {
+			if (this.$modal != null && event.response['brosland_modals__closeModal']) {
+				this.$modal.data('closed', true);
 				this.close();
 			}
 		});
@@ -41,13 +42,8 @@ export default class Brosland_ModalsNajaExtension {
 	open($modal) {
 		$modal.modal(); // init modal
 		$modal.on('hide.bs.modal', function (e) {
-			if ($modal.data('on-close-url') != null) {
-				Naja.makeRequest(
-					'GET',
-					$modal.data('on-close-url'),
-					null,
-					{'unique': false, 'history': true}
-				);
+			if (!$modal.data('closed') && $modal.data('on-close-url') != null) {
+				Naja.makeRequest('POST', $modal.data('on-close-url'));
 			}
 		});
 		$modal.on('hidden.bs.modal', function (e) {

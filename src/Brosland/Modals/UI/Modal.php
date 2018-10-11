@@ -58,9 +58,7 @@ abstract class Modal extends Control
             $this->openRequired = false;
 
             if ($this->presenter->isAjax()) {
-                $this->presenter->getPayload()->closeModal = true;
-                $this->presenter->getPayload()->postGet = true;
-                $this->presenter->getPayload()->url = $this->link('this');
+                $this->presenter->getPayload()->brosland_modals__closeModal = true;
             }
 
             $this->onClose($this);
@@ -69,7 +67,9 @@ abstract class Modal extends Control
 
     public function handleClose(): void
     {
-        $this->close();
+        if ($this->isActive()) {
+            $this->close();
+        }
     }
 
     public function render(): void
