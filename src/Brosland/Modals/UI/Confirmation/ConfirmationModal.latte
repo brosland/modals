@@ -4,8 +4,8 @@
 
 {block body}
 	{include #parent}
-	<form n:name="form" class="ajax pt-3">
-		<p>{_$question}</p>
+	<form n:name="form" class="ajax">
+		<p class="py-5 text-center">{_$question}</p>
 		<hr>
 		<div class="text-right">
 			{input cancel, class => 'btn btn-light mr-1', data-dismiss => '$modal'}

@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Brosland\Modals\UI;
 
+use Nette\Application\UI\ITemplate;
 use Nette\Application\UI\Presenter;
+use Nette\Bridges\ApplicationLatte\Template;
 use Nette\InvalidArgumentException;
 use Nette\Utils\Random;
 
@@ -27,12 +29,16 @@ trait ModalManagerTrait
      */
     private static $COOKIE_PREFIX = 'brosland_modals__';
 
-
     /**
      * @param bool $throw
      * @return Presenter
      */
     abstract function getPresenter($throw = true);
+
+    /**
+     * @return ITemplate
+     */
+    abstract function getTemplate();
 
     public function getActiveModal(): ?Modal
     {
@@ -76,13 +82,26 @@ trait ModalManagerTrait
             $this->init();
         }
 
-        $this->getPresenter()->getTemplate()->modal = $this->activeModal;
+        /** @var Template $template */
+        $template = $this->getTemplate();
+        $template->add('modal', $this->activeModal);
 
-        if ($this->getPresenter()->isAjax()) {
-            $redrawModal = $this->activeModal !== null &&
-                $this->activeModal->isOpenRequired();
+        $presenter = $this->getPresenter();
 
-            $this->getPresenter()->redrawControl('modal', $redrawModal);
+        $session = $presenter->getSession(Modal::class);
+
+        $closeModal = isset($session['close']);
+        unset($session['close']);
+
+        if ($presenter->isAjax()) {
+            $presenter->redrawControl(
+                'modal',
+                $this->activeModal !== null && $this->activeModal->isOpenRequired()
+            );
+
+            if ($closeModal) {
+                $presenter->getPayload()->brosland_modals__closeModal = true;
+            }
         }
     }
 

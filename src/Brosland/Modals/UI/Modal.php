@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
+use Nette\Http\SessionSection;
 
 /**
  * @method void onClose(self $modal)
@@ -22,7 +23,6 @@ abstract class Modal extends Control
      * @var bool
      */
     private $openRequired = false;
-
 
     public function isActive(): bool
     {
@@ -56,10 +56,7 @@ abstract class Modal extends Control
             $modalManager->setActiveModal(null);
 
             $this->openRequired = false;
-
-            if ($this->presenter->isAjax()) {
-                $this->presenter->getPayload()->brosland_modals__closeModal = true;
-            }
+            $this->getSession()['close'] = true;
 
             $this->onClose($this);
         }
@@ -84,5 +81,10 @@ abstract class Modal extends Control
         $control = $this->lookup(ModalManager::class);
 
         return $control;
+    }
+
+    private function getSession(): SessionSection
+    {
+        return $this->presenter->getSession(self::class);
     }
 }
