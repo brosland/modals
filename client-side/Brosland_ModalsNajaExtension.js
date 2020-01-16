@@ -1,7 +1,9 @@
 import $ from 'jquery';
 import Naja from 'naja';
 
-export default class Brosland_ModalsNajaExtension {
+let Brosland = {};
+
+export default Brosland.ModalsExtension = class ModalsExtension {
 	constructor(naja) {
 		this.$modal = null;
 
@@ -57,4 +59,4 @@ export default class Brosland_ModalsNajaExtension {
 	close() {
 		this.$modal.modal('hide');
 	}
-}
+};

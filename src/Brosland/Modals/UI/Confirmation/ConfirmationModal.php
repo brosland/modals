@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI\Confirmation;
 
 use Brosland\Modals\UI\Modal;
+use Nette\Bridges\ApplicationLatte\Template;
+use Nette\Forms\Controls\SubmitButton;
 
 /**
  * @method void onConfirm(self $modal)
@@ -11,7 +13,7 @@ use Brosland\Modals\UI\Modal;
 class ConfirmationModal extends Modal
 {
     /**
-     * @var callable[] function (ConfirmationModal $modal) {...}
+     * @var callable[] function (self $modal):void {...}
      */
     public $onConfirm = [];
     /**
@@ -27,11 +29,8 @@ class ConfirmationModal extends Modal
      */
     private $confirmationFormFactory;
 
-
     public function __construct(ConfirmationFormFactory $confirmationFormFactory)
     {
-        parent::__construct();
-
         $this->confirmationFormFactory = $confirmationFormFactory;
         $this->title = $this->prefix . 'confirmation';
         $this->question = $this->prefix . 'question';
@@ -51,30 +50,32 @@ class ConfirmationModal extends Modal
     {
         parent::render();
 
-        $this->template->title = $this->title;
-        $this->template->question = $this->question;
-
-        $this->template->setFile(__DIR__ . '/ConfirmationModal.latte');
-        $this->template->render();
+        /** @var Template $template */
+        $template = $this->getTemplate();
+        $template->add('title', $this->title);
+        $template->add('question', $this->question);
+        $template->setFile(__DIR__ . '/ConfirmationModal.latte');
+        $template->render();
     }
 
-    // factories **************************************************************/
+    // factories ***************************************************************
 
     protected function createComponentForm(): ConfirmationForm
     {
         $form = $this->confirmationFormFactory->create();
-        $form['cancel']->onClick[] = function () {
+
+        /** @var SubmitButton $cancelButton */
+        $cancelButton = $form['cancel'];
+        $cancelButton->onClick[] = function (): void {
             $this->close();
         };
-        $form['confirm']->onClick[] = function () {
+
+        /** @var SubmitButton $confirmButton */
+        $confirmButton = $form['confirm'];
+        $confirmButton->onClick[] = function (): void {
             $this->onConfirm($this);
         };
 
         return $form;
     }
-}
-
-interface ConfirmationModalFactory
-{
-    function create(): ConfirmationModal;
 }

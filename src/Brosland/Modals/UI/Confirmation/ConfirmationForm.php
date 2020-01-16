@@ -12,7 +12,6 @@ class ConfirmationForm extends Form
      */
     private $prefix = 'brosland.modals.ui.confirmation.confirmationForm.';
 
-
     public function __construct()
     {
         parent::__construct();
@@ -22,9 +21,4 @@ class ConfirmationForm extends Form
 
         $this->addSubmit('confirm', $this->prefix . 'confirm');
     }
-}
-
-interface ConfirmationFormFactory
-{
-    function create(): ConfirmationForm;
 }

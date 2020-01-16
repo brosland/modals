@@ -6,24 +6,26 @@ namespace Brosland\Modals\DI;
 use Brosland\Modals\UI\Modal;
 use Nette\DI\CompilerExtension;
 use Nette\PhpGenerator\ClassType;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 
 final class ModalsExtension extends CompilerExtension
 {
-	/**
-	 * @var array
-	 */
-	private $defaults = [
-			'version' => 'v4'
-	];
+    public function getConfigSchema(): Schema
+    {
+        return Expect::structure([
+            'version' => Expect::string('v4')
+        ]);
+    }
 
+    public function afterCompile(ClassType $class): void
+    {
+        parent::afterCompile($class);
 
-	public function afterCompile(ClassType $class): void
-	{
-		parent::afterCompile($class);
+        /** @var mixed[] $config */
+        $config = $this->getConfig();
 
-		$config = $this->getConfig($this->defaults);
-
-		$initialize = $class->methods['initialize'];
-		$initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
-	}
+        $initialize = $class->methods['initialize'];
+        $initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
+use Nette\Bridges\ApplicationLatte\Template;
 use Nette\Http\SessionSection;
 
 /**
@@ -71,8 +72,15 @@ abstract class Modal extends Control
 
     public function render(): void
     {
-        $this->template->setFile(__DIR__ . '/Modal.' . self::$VERSION . '.latte');
-        $this->template->modalTemplate = $this->template->getFile();
+        $this->beforeRender();
+        $this->getTemplate()->render();
+    }
+
+    protected function beforeRender(): void
+    {
+        /** @var Template $template */
+        $template = $this->getTemplate();
+        $template->add('modalTemplate', __DIR__ . '/Modal.' . self::$VERSION . '.latte');
     }
 
     private function getModalManager(): ModalManager
@@ -83,8 +91,14 @@ abstract class Modal extends Control
         return $control;
     }
 
+    /**
+     * @return SessionSection<mixed>
+     */
     private function getSession(): SessionSection
     {
-        return $this->presenter->getSession(self::class);
+        /** @var SessionSection<mixed> $section */
+        $section = $this->presenter->getSession(self::class);
+
+        return $section;
     }
 }
