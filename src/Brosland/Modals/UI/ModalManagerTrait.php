@@ -13,7 +13,7 @@ trait ModalManagerTrait
 {
     /**
      * @persistent
-     * @var null|string
+     * @var string|null
      */
     public $modal = null;
     /**
@@ -21,7 +21,7 @@ trait ModalManagerTrait
      */
     private $initialized = false;
     /**
-     * @var null|Modal
+     * @var Modal|null
      */
     private $activeModal;
     /**
@@ -29,16 +29,9 @@ trait ModalManagerTrait
      */
     private static $COOKIE_PREFIX = 'brosland_modals__';
 
-    /**
-     * @param bool $throw
-     * @return Presenter
-     */
-    abstract function getPresenter($throw = true);
+    public abstract function getPresenter(): Presenter;
 
-    /**
-     * @return ITemplate
-     */
-    abstract function getTemplate();
+    public abstract function getTemplate(): ITemplate;
 
     public function getActiveModal(): ?Modal
     {
