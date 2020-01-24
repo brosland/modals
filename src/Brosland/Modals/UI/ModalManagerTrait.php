@@ -49,7 +49,13 @@ trait ModalManagerTrait
             $this->init();
         }
 
-        $httpResponse = $this->requirePresenter()->getHttpResponse();
+        $presenter = $this->getPresenter();
+
+        if ($presenter === null) {
+            throw new RuntimeException('The component is not attached to the presenter.');
+        }
+
+        $httpResponse = $presenter->getHttpResponse();
 
         if ($this->modal !== null) {
             $httpResponse->deleteCookie(self::$COOKIE_PREFIX . $this->modal);
@@ -80,7 +86,12 @@ trait ModalManagerTrait
         $template = $this->getTemplate();
         $template->add('modal', $this->activeModal);
 
-        $presenter = $this->requirePresenter();
+        $presenter = $this->getPresenter();
+
+        if ($presenter === null) {
+            throw new RuntimeException('The component is not attached to the presenter.');
+        }
+
         $session = $presenter->getSession(Modal::class);
 
         $closeModal = isset($session['close']);
@@ -106,11 +117,17 @@ trait ModalManagerTrait
             return;
         }
 
-        $httpRequest = $this->requirePresenter()->getHttpRequest();
+        $presenter = $this->getPresenter();
+
+        if ($presenter === null) {
+            throw new RuntimeException('The component is not attached to the presenter.');
+        }
+
+        $httpRequest = $presenter->getHttpRequest();
         $activeModalId = (string)$httpRequest->getCookie(self::$COOKIE_PREFIX . $this->modal);
 
         try {
-            $control = $this->requirePresenter()->getComponent($activeModalId);
+            $control = $presenter->getComponent($activeModalId);
 
             if (!$control instanceof Modal) {
                 throw new InvalidArgumentException();
@@ -120,16 +137,5 @@ trait ModalManagerTrait
         } catch (InvalidArgumentException $e) {
             $this->setActiveModal(null);
         }
-    }
-
-    private function requirePresenter(): Presenter
-    {
-        $presenter = $this->getPresenter();
-
-        if ($presenter === null) {
-            throw new RuntimeException('The component has not been attached to the presenter.');
-        }
-
-        return $presenter;
     }
 }
