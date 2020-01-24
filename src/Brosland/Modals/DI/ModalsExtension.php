@@ -14,8 +14,8 @@ final class ModalsExtension extends CompilerExtension
     public function getConfigSchema(): Schema
     {
         return Expect::structure([
-            'version' => Expect::string('v4')
-        ]);
+            'version' => Expect::string('v4')->dynamic()
+        ])->castTo('array');
     }
 
     public function afterCompile(ClassType $class): void
