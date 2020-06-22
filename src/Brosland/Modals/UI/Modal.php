@@ -2,155 +2,120 @@
 
 namespace Brosland\Modals\UI;
 
-use Nette\Application\UI\Control,
-	Nette\Application\UI\Presenter,
-	Nette\Utils\Html;
+use Nette\Application\UI\Control;
+use Nette\Bridges\ApplicationLatte\Template;
+use Nette\Http\SessionSection;
 
+/**
+ * @method void onClose(self $modal)
+ */
 abstract class Modal extends Control
 {
+    /** @var string */
+    public static $VERSION = 'v4';
+    /** @var callable[] */
+    public $onClose = [];
+    /** @var bool */
+    private $openRequired = false;
 
-	/**
-	 * @var Modal
-	 */
-	private static $ACTIVE_MODAL = NULL;
-	/**
-	 * @var boolean
-	 */
-	private static $CLOSE_REQUIRED = FALSE;
-	/**
-	 * @var string
-	 */
-	public static $VERSION = 'v3';
-	/**
-	 * @var callable[]
-	 */
-	public $onClose = [];
-	/**
-	 * @persistent
-	 * @var boolean
-	 */
-	public $visible = FALSE;
-	/**
-	 * @var boolean
-	 */
-	private $openRequired = FALSE;
-	/**
-	 * @var Html
-	 */
-	private $elementPrototype = NULL;
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->getModalManager()->getActiveModal() === $this;
+    }
 
+    /**
+     * @return bool
+     */
+    public function isOpenRequired()
+    {
+        return $this->openRequired;
+    }
 
-	/**
-	 * @return Modal
-	 */
-	public static function getActiveModal()
-	{
-		return self::$ACTIVE_MODAL;
-	}
+    /**
+     * @return void
+     */
+    public function open()
+    {
+        $modalManager = $this->getModalManager();
+        $activeModal = $modalManager->getActiveModal();
 
-	/**
-	 * @return boolean
-	 */
-	public static function isCloseRequired()
-	{
-		return self::$CLOSE_REQUIRED;
-	}
+        if ($activeModal !== $this && $activeModal !== null) {
+            $activeModal->close();
+        }
 
-	/**
-	 * @return boolean
-	 */
-	public function isOpenRequired()
-	{
-		return $this->openRequired;
-	}
+        $modalManager->setActiveModal($this);
 
-	/**
-	 * @param boolean $visible
-	 * @return self
-	 */
-	public function setVisible($visible = TRUE, $openRequired = FALSE)
-	{
-		if ($visible)
-		{
-			if (self::$ACTIVE_MODAL !== NULL && self::$ACTIVE_MODAL !== $this)
-			{
-				self::$ACTIVE_MODAL->setVisible(FALSE);
-			}
+        $this->openRequired = true;
+    }
 
-			self::$ACTIVE_MODAL = $this;
-		}
-		else
-		{
-			if (self::$ACTIVE_MODAL == $this)
-			{
-				self::$ACTIVE_MODAL = NULL;
-			}
+    /**
+     * @return void
+     */
+    public function close()
+    {
+        $modalManager = $this->getModalManager();
 
-			self::$CLOSE_REQUIRED = TRUE;
-		}
+        if ($modalManager->getActiveModal() === $this) {
+            $modalManager->setActiveModal(null);
 
-		$this->visible = $visible;
-		$this->openRequired = $openRequired;
+            $this->openRequired = false;
+            $this->getSession()['close'] = true;
 
-		return $this;
-	}
+            $this->onClose($this);
+        }
+    }
 
-	/**
-	 * @return Html
-	 */
-	public function getElementPrototype()
-	{
-		if ($this->elementPrototype === NULL)
-		{
-			$this->elementPrototype = Html::el('div');
-		}
+    /**
+     * @return void
+     */
+    public function handleClose()
+    {
+        if ($this->isActive()) {
+            $this->close();
+        }
+    }
 
-		return $this->elementPrototype;
-	}
+    /**
+     * @return void
+     */
+    public function render()
+    {
+        $this->beforeRender();
+        $this->getTemplate()->render();
+    }
 
-	public function handleClose()
-	{
-		$this->setVisible(FALSE);
-		$this->onClose($this);
-	}
+    /**
+     * @return void
+     */
+    protected function beforeRender()
+    {
+        /** @var Template $template */
+        $template = $this->getTemplate();
+        $template->add('modalTemplate', __DIR__ . '/Modal.' . self::$VERSION . '.latte');
+    }
 
-	/**
-	 * @param IComponent $component
-	 */
-	protected function attached($component)
-	{
-		parent::attached($component);
+    /**
+     * @return ModalManager
+     */
+    private function getModalManager()
+    {
+        /** @var ModalManager $control */
+        $control = $this->lookup(ModalManager::class);
 
-		if (!$component instanceof Presenter)
-		{
-			return;
-		}
+        return $control;
+    }
 
-		if ($this->visible)
-		{
-			self::$ACTIVE_MODAL = $this;
-		}
-	}
+    /**
+     * @return SessionSection<mixed>
+     */
+    private function getSession()
+    {
+        /** @var SessionSection<mixed> $section */
+        $section = $this->presenter->getSession(self::class);
 
-	protected function beforeRender()
-	{
-		$elementPrototype = $this->getElementPrototype();
-		$elementPrototype->class[] = 'modal fade';
-		$elementPrototype->addAttributes([
-			'tabindex' => -1,
-			'role' => 'dialog',
-			'aria-labelledby' => $this->getUniqueId() . '-label',
-			'data-onclose' => $this->link('close!')
-		]);
-
-		$this->template->elementPrototype = $elementPrototype;
-		$this->template->setFile(__DIR__ . '/templates/Modal/' . self::$VERSION . '.latte');
-	}
-
-	public function render()
-	{
-		$this->beforeRender();
-
-		$this->template->render();
-	}
+        return $section;
+    }
 }

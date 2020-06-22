@@ -1,0 +1,10 @@
+# Brosland\Modals\UI
+Brosland\Modals\UI\Modal:
+	close: 'Close'
+
+# Brosland\Modals\UI\Confirmation
+Brosland\Modals\UI\Confirmation\ConfirmationModal:
+	cancel: 'Cancel'
+	confirm: 'Confirm'
+	question: 'Are you sure you want to execute this action?'
+	title: 'Confirmation'

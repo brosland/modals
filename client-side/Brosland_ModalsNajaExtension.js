@@ -1,0 +1,62 @@
+import $ from 'jquery';
+import Naja from 'naja';
+
+let Brosland = {};
+
+export default Brosland.ModalsExtension = class ModalsExtension {
+	constructor(naja) {
+		this.$modal = null;
+
+		naja.addEventListener('init', this.init.bind(this));
+		naja.addEventListener('success', (event) => {
+			if (this.$modal != null && event.response['brosland_modals__closeModal']) {
+				this.$modal.data('closed', true);
+				this.close();
+			}
+		});
+		naja.snippetHandler.addEventListener('afterUpdate', (event) => {
+			this.setup(document.getElementById(event.snippet.id));
+		});
+	}
+
+	init() {
+		this.setup(window.document.body);
+	}
+
+	/**
+	 * @param {HTMLElement} element
+	 */
+	setup(element) {
+		const $modalElement = $(element).find('.modal').first();
+
+		if ($modalElement.length === 1) {
+			if (this.$modal != null) {
+				this.close();
+			}
+
+			this.open($modalElement);
+		}
+	}
+
+	/**
+	 * @param {jQuery} $modal
+	 */
+	open($modal) {
+		$modal.modal(); // init modal
+		$modal.on('hide.bs.modal', function (e) {
+			if (!$modal.data('closed') && $modal.data('on-close-url') != null) {
+				Naja.makeRequest('POST', $modal.data('on-close-url'));
+			}
+		});
+		$modal.on('hidden.bs.modal', function (e) {
+			$modal.modal('dispose');
+		});
+
+		this.$modal = $modal;
+		this.$modal.modal('show');
+	}
+
+	close() {
+		this.$modal.modal('hide');
+	}
+};

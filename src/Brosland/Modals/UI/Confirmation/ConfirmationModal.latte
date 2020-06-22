@@ -1,0 +1,15 @@
+{extends $modalTemplate}
+
+{block title}{_//$title}{/block}
+
+{block body}
+    {include #parent}
+    <form n:name="form" n:translator="'brosland.'.get_class($control)" class="ajax">
+        <p class="py-5 text-center">{_//$question}</p>
+        <hr>
+        <div class="d-flex justify-content-end">
+            <a n:href="close!" class="ajax btn btn-light mr-1">{_cancel}</a>
+            <input n:name="confirm" alt="" class="btn btn-primary" value="{_confirm}">
+        </div>
+    </form>
+{/block}
