@@ -24,9 +24,10 @@ trait ModalManagerTrait
     private static $COOKIE_PREFIX = 'brosland_modals__';
 
     /**
+     * @param bool $throw
      * @return Presenter|null
      */
-    public abstract function getPresenter();
+    public abstract function getPresenter($throw = true);
 
     /**
      * @return ITemplate
