@@ -15,14 +15,11 @@ class ConfirmationModal extends Modal
     public $onConfirm = [];
     /** @var string */
     private $title, $question;
-    /** @var ConfirmationFormFactory */
-    private $confirmationFormFactory;
 
-    public function __construct(ConfirmationFormFactory $confirmationFormFactory)
+    public function __construct()
     {
         parent::__construct();
 
-        $this->confirmationFormFactory = $confirmationFormFactory;
         $this->title = $this->prefix('confirmation');
         $this->question = $this->prefix('question');
     }
