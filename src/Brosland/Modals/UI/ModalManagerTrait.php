@@ -11,11 +11,12 @@ use RuntimeException;
 
 trait ModalManagerTrait
 {
+    private static string $COOKIE_PREFIX = 'brosland_modals__';
+
     /** @persistent */
     public ?string $modal = null;
+    private ?Modal $activeModal = null;
     private bool $initialized = false;
-    private ?Modal $activeModal;
-    private static string $COOKIE_PREFIX = 'brosland_modals__';
 
     public abstract function getPresenter(): ?Presenter;
 

@@ -38,13 +38,15 @@ class ConfirmationModal extends Modal
         $template = $this->getTemplate();
         $template->title = $this->title;
         $template->question = $this->question;
+        $template->cancelLabel = $this->prefix('cancel');
+        $template->confirmLabel = $this->prefix('confirm');
         $template->setFile(__DIR__ . '/ConfirmationModal.latte');
         $template->render();
     }
 
-    private function prefix(string $value): string
+    private function prefix(?string $value = null): string
     {
-        return implode('.', ['//brosland', self::class, $value]);
+        return implode('.', array_filter(['//brosland', self::class, $value]));
     }
 
     // factories ***************************************************************
@@ -53,12 +55,12 @@ class ConfirmationModal extends Modal
     {
         $form = new Form();
 
-        $cancelButton = $form->addSubmit('cancel', $this->prefix('cancel'));
+        $cancelButton = $form->addSubmit('cancel');
         $cancelButton->onClick[] = function (): void {
             $this->close();
         };
 
-        $confirmButton = $form->addSubmit('confirm', $this->prefix('confirm'));
+        $confirmButton = $form->addSubmit('confirm');
         $confirmButton->onClick[] = function (): void {
             $this->onConfirm($this);
         };
