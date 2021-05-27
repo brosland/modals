@@ -33,7 +33,7 @@ class ConfirmationModal extends Modal
 
     protected function beforeRender(): void
     {
-        parent::render();
+        parent::beforeRender();
 
         $template = $this->getTemplate();
         $template->title = $this->title;
@@ -41,12 +41,11 @@ class ConfirmationModal extends Modal
         $template->cancelLabel = $this->prefix('cancel');
         $template->confirmLabel = $this->prefix('confirm');
         $template->setFile(__DIR__ . '/ConfirmationModal.latte');
-        $template->render();
     }
 
-    private function prefix(?string $value = null): string
+    private function prefix(string $value): string
     {
-        return implode('.', array_filter(['//brosland', self::class, $value]));
+        return implode('.', ['//brosland', self::class, $value]);
     }
 
     // factories ***************************************************************
