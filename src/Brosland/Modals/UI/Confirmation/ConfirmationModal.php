@@ -54,16 +54,15 @@ class ConfirmationModal extends Modal
     /**
      * @return void
      */
-    public function render()
+    public function beforeRender()
     {
-        parent::render();
+        parent::beforeRender();
 
         /** @var Template $template */
         $template = $this->getTemplate();
         $template->add('title', $this->title);
         $template->add('question', $this->question);
         $template->setFile(__DIR__ . '/ConfirmationModal.latte');
-        $template->render();
     }
 
     // factories ***************************************************************
