@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
-use Nette\Bridges\ApplicationLatte\Template;
 use Nette\Http\SessionSection;
 
 /**
@@ -12,18 +11,11 @@ use Nette\Http\SessionSection;
  */
 abstract class Modal extends Control
 {
-    /**
-     * @var string
-     */
-    public static $VERSION = 'v4';
-    /**
-     * @var callable[]
-     */
-    public $onClose = [];
-    /**
-     * @var bool
-     */
-    private $openRequired = false;
+    public static string $VERSION = 'v4';
+
+    /** @var callable[] */
+    public array $onClose = [];
+    private bool $openRequired = false;
 
     public function isActive(): bool
     {
@@ -78,9 +70,8 @@ abstract class Modal extends Control
 
     protected function beforeRender(): void
     {
-        /** @var Template $template */
         $template = $this->getTemplate();
-        $template->add('modalTemplate', __DIR__ . '/Modal.' . self::$VERSION . '.latte');
+        $template->modalTemplate = __DIR__ . '/Modal.' . self::$VERSION . '.latte';
     }
 
     private function getModalManager(): ModalManager

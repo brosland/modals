@@ -56,13 +56,6 @@ abstract class BasePresenter extends Presenter implements ModalManager
 
 4\. Install [Webpack](https://webpack.js.org/) and [Naja](https://github.com/jiripudil/Naja).
 
-If you don't prefer one of them you will need to implement own client side (for inspiration look at [this](https://github.com/brosland/modals/blob/development/client-side/Brosland_ModalsNajaExtension.js)). 
-Else you can continue to the next step.
- 
-5\. Copy `client-side/Brosland_ModalsNajaExtension.js` to your directory with Javascript files and register it in `Naja`.
+5\. Copy `client-side/ModalNajaExtension.js` to your directory with Javascript files and register it in `Naja`.
 
 6\. Don't forget to rebuild Webpack bundles.
-
-
-### Example
-You can find example code [here](https://github.com/brosland/modals-test/tree/v2.0).

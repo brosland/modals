@@ -4,36 +4,21 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI\Confirmation;
 
 use Brosland\Modals\UI\Modal;
-use Nette\Bridges\ApplicationLatte\Template;
-use Nette\Forms\Controls\SubmitButton;
+use Nette\Application\UI\Form;
 
 /**
  * @method void onConfirm(self $modal)
  */
 class ConfirmationModal extends Modal
 {
-    /**
-     * @var callable[] function (self $modal):void {...}
-     */
-    public $onConfirm = [];
-    /**
-     * @var string
-     */
-    private $prefix = 'brosland.modals.ui.confirmation.confirmationModal.';
-    /**
-     * @var string
-     */
-    private $title, $question;
-    /**
-     * @var ConfirmationFormFactory
-     */
-    private $confirmationFormFactory;
+    /** @var callable[] */
+    public array $onConfirm = [];
+    private string $title, $question;
 
-    public function __construct(ConfirmationFormFactory $confirmationFormFactory)
+    public function __construct()
     {
-        $this->confirmationFormFactory = $confirmationFormFactory;
-        $this->title = $this->prefix . 'confirmation';
-        $this->question = $this->prefix . 'question';
+        $this->title = $this->prefix('confirmation');
+        $this->question = $this->prefix('question');
     }
 
     public function setTitle(string $title): void
@@ -46,32 +31,34 @@ class ConfirmationModal extends Modal
         $this->question = $question;
     }
 
-    public function render(): void
+    protected function beforeRender(): void
     {
         parent::render();
 
-        /** @var Template $template */
         $template = $this->getTemplate();
-        $template->add('title', $this->title);
-        $template->add('question', $this->question);
+        $template->title = $this->title;
+        $template->question = $this->question;
         $template->setFile(__DIR__ . '/ConfirmationModal.latte');
         $template->render();
     }
 
+    private function prefix(string $value): string
+    {
+        return implode('.', ['//brosland', self::class, $value]);
+    }
+
     // factories ***************************************************************
 
-    protected function createComponentForm(): ConfirmationForm
+    protected function createComponentForm(): Form
     {
-        $form = $this->confirmationFormFactory->create();
+        $form = new Form();
 
-        /** @var SubmitButton $cancelButton */
-        $cancelButton = $form['cancel'];
+        $cancelButton = $form->addSubmit('cancel', $this->prefix('cancel'));
         $cancelButton->onClick[] = function (): void {
             $this->close();
         };
 
-        /** @var SubmitButton $confirmButton */
-        $confirmButton = $form['confirm'];
+        $confirmButton = $form->addSubmit('confirm', $this->prefix('confirm'));
         $confirmButton->onClick[] = function (): void {
             $this->onConfirm($this);
         };

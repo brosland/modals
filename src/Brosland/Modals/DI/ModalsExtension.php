@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Brosland\Modals\DI;
 
+use Brosland\Modals\UI\Confirmation\ConfirmationModalFactory;
 use Brosland\Modals\UI\Modal;
 use Nette\DI\CompilerExtension;
 use Nette\PhpGenerator\ClassType;
@@ -16,6 +17,16 @@ final class ModalsExtension extends CompilerExtension
         return Expect::structure([
             'version' => Expect::string('v4')->dynamic()
         ])->castTo('array');
+    }
+
+    public function loadConfiguration(): void
+    {
+        parent::loadConfiguration();
+
+        $builder = $this->getContainerBuilder();
+
+        $builder->addFactoryDefinition($this->prefix('confirmationModalFactory'))
+            ->setImplement(ConfirmationModalFactory::class);
     }
 
     public function afterCompile(ClassType $class): void

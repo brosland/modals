@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Brosland\Modals\UI;
 
-use Nette\Application\UI\ITemplate;
 use Nette\Application\UI\Presenter;
 use Nette\Bridges\ApplicationLatte\Template;
 use Nette\InvalidArgumentException;
@@ -12,27 +11,15 @@ use RuntimeException;
 
 trait ModalManagerTrait
 {
-    /**
-     * @persistent
-     * @var string|null
-     */
-    public $modal = null;
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-    /**
-     * @var Modal|null
-     */
-    private $activeModal;
-    /**
-     * @var string
-     */
-    private static $COOKIE_PREFIX = 'brosland_modals__';
+    /** @persistent */
+    public ?string $modal = null;
+    private bool $initialized = false;
+    private ?Modal $activeModal;
+    private static string $COOKIE_PREFIX = 'brosland_modals__';
 
     public abstract function getPresenter(): ?Presenter;
 
-    public abstract function getTemplate(): ITemplate;
+    public abstract function getTemplate(): Template;
 
     public function getActiveModal(): ?Modal
     {

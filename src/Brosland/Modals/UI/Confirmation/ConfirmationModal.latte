@@ -1,15 +1,21 @@
-{extends $modalTemplate}
+{varType Brosland\Modals\UI\Confirmation\ConfirmationModal $control}
+{varType string $modalTemplate}
+{varType string $question}
+{varType string $title}
 
-{block title}{_$title}{/block}
+{import $modalTemplate}
 
-{block body}
-	{include #parent}
-	<form n:name="form" class="ajax">
-		<p class="py-5 text-center">{_$question}</p>
-		<hr>
-		<div class="text-right">
-			{input cancel, class => 'btn btn-light mr-1', data-dismiss => '$modal'}
-			{input confirm, class => 'btn btn-primary'}
-		</div>
-	</form>
+{block #title}{_$title}{/block}
+
+{block #body}
+    {include #parent}
+
+    <form n:name="form" class="ajax">
+        <p class="py-5 text-center">{_$question}</p>
+        <hr>
+        <div class="text-right">
+            <input n:name="cancel" class="btn btn-light mr-1" data-dismiss="modal" title="">
+            <input n:name="confirm" class="btn btn-primary mr-1" data-dismiss="modal" title="">
+        </div>
+    </form>
 {/block}
