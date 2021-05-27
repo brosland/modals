@@ -1,15 +1,16 @@
 import $ from 'jquery';
 import naja from 'naja';
 
-export default class ModalNajaExtension {
+export default class Modal {
     /**
      * @param {naja} naja
      */
     constructor(naja) {
+        this.naja = naja;
         this.$modal = null;
 
-        naja.addEventListener('init', this.init.bind(this));
-        naja.addEventListener(
+        this.naja.addEventListener('init', this.init.bind(this));
+        this.naja.addEventListener(
             'success',
             (event) => {
                 if (this.$modal != null && event.response['brosland_modals__closeModal']) {
@@ -19,7 +20,7 @@ export default class ModalNajaExtension {
             }
         );
 
-        naja.snippetHandler.addEventListener(
+        this.naja.snippetHandler.addEventListener(
             'afterUpdate',
             (event) => {
                 this.setup(document.getElementById(event.snippet.id));
@@ -59,8 +60,8 @@ export default class ModalNajaExtension {
         this.$modal.on(
             'hide.bs.modal',
             (e) => {
-                if (!$modal.data('closed') && $modal.data('on-close-url') != null) {
-                    Naja.makeRequest('POST', $modal.data('on-close-url'));
+                if (!this.$modal.data('closed') && this.$modal.data('on-close-url') != null) {
+                    this.naja.makeRequest('POST', this.$modal.data('on-close-url'));
                 }
             }
         );
@@ -68,7 +69,7 @@ export default class ModalNajaExtension {
         this.$modal.on(
             'hidden.bs.modal',
             (e) => {
-                $modal.modal('dispose');
+                this.$modal.modal('dispose');
             }
         );
 
