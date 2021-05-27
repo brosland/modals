@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Presenter;
-use Nette\Bridges\ApplicationLatte\Template;
+use Nette\Application\UI\Template;
 use Nette\InvalidArgumentException;
 use Nette\Utils\Random;
 use RuntimeException;
