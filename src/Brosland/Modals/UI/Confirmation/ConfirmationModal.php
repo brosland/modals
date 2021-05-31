@@ -13,7 +13,8 @@ class ConfirmationModal extends Modal
 {
     /** @var callable[] */
     public array $onConfirm = [];
-    private string $title, $question;
+    /** @var string|mixed  */
+    private $title, $question;
 
     public function __construct()
     {
@@ -21,12 +22,18 @@ class ConfirmationModal extends Modal
         $this->question = $this->prefix('question');
     }
 
-    public function setTitle(string $title): void
+    /**
+     * @param string|mixed $title
+     */
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
 
-    public function setQuestion(string $question): void
+    /**
+     * @param string|mixed $question
+     */
+    public function setQuestion($question): void
     {
         $this->question = $question;
     }
