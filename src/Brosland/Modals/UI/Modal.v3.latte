@@ -1,8 +1,6 @@
 {varType Brosland\Modals\UI\Modal $control}
 {varType \stdClass[] $flashes}
 
-{var $txDomain = implode('.', ['brosland', Brosland\Modals\UI\Modal::class])}
-
 <div n:inner-block="modal" class="modal" data-on-close-url="{link close!}" tabindex="-1" role="dialog">
     <div n:inner-block="dialog" class="modal-dialog" role="document">
         <div n:inner-block="content" class="modal-content">
@@ -11,7 +9,7 @@
                         type="button"
                         class="close"
                         data-dismiss="modal"
-                        aria-label="{_($txDomain . '.close')}">
+                >
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 n:snippet="title" n:inner-block="title" class="modal-title"></h4>
