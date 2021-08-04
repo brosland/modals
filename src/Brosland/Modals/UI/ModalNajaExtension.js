@@ -16,7 +16,10 @@ export default class ModalNajaExtension {
         naja.addEventListener(
             'complete',
             (event) => {
-                if (this.modal != null && event.detail.payload['brosland_modals__closeModal']) {
+                if (
+                    this.modal !== null &&
+                    event.detail.payload.hasOwnProperty('brosland_modals__closeModal')
+                ) {
                     this.close();
                 }
             }
@@ -49,7 +52,11 @@ export default class ModalNajaExtension {
         this.modal = modal;
         this.modal.addEventListener(
             'hidden.bs.modal',
-            () => $(this.modal).modal('dispose')
+            () => {
+                $(this.modal).modal('dispose');
+
+                this.modal = null;
+            }
         );
 
         $(this.modal).modal(); // init modal
