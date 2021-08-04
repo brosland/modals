@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import naja from 'naja';
 
 export default class ModalNajaExtension {
     constructor() {
@@ -18,7 +17,6 @@ export default class ModalNajaExtension {
             'complete',
             (event) => {
                 if (this.modal != null && event.detail.payload['brosland_modals__closeModal']) {
-                    this.modal.data('closed', true);
                     this.close();
                 }
             }
@@ -50,17 +48,6 @@ export default class ModalNajaExtension {
 
         this.modal = modal;
         this.modal.addEventListener(
-            'hide.bs.modal',
-            () => {
-                if (
-                    !this.modal.getAttribute('data-closed') &&
-                    this.modal.getAttribute('data-on-close-url') != null
-                ) {
-                    naja.makeRequest('POST', this.modal.getAttribute('data-on-close-url'));
-                }
-            }
-        );
-        this.modal.addEventListener(
             'hidden.bs.modal',
             () => $(this.modal).modal('dispose')
         );
@@ -73,8 +60,6 @@ export default class ModalNajaExtension {
      * @return {void}
      */
     close() {
-        if (this.modal) {
-            $(this.modal).modal('hide');
-        }
+        $(this.modal).modal('hide');
     }
 };
