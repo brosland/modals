@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import {Modal} from 'bootstrap';
 
 export default class ModalNajaExtension {
     constructor() {
@@ -20,7 +20,7 @@ export default class ModalNajaExtension {
                     this.modal !== null &&
                     event.detail.payload.hasOwnProperty('brosland_modals__closeModal')
                 ) {
-                    this.close();
+                    this.modal.hide();
                 }
             }
         );
@@ -38,35 +38,20 @@ export default class ModalNajaExtension {
         const modalElement = html.querySelector('.modal');
 
         if (modalElement) {
-            this.open(modalElement);
-        }
-    }
-
-    /**
-     * @param {HTMLElement} modal
-     * @return {void}
-     */
-    open(modal) {
-        this.close(); // close previous modal
-
-        this.modal = modal;
-        this.modal.addEventListener(
-            'hidden.bs.modal',
-            () => {
-                $(this.modal).modal('dispose');
-
-                this.modal = null;
+            if (this.modal !== null) {
+                this.modal.hide();
             }
-        );
 
-        $(this.modal).modal(); // init modal
-        $(this.modal).modal('show');
-    }
+            this.modal = new Modal(modalElement);
+            this.modal.show();
 
-    /**
-     * @return {void}
-     */
-    close() {
-        $(this.modal).modal('hide');
+            modalElement.addEventListener(
+                'hidden.bs.modal',
+                (event) => {
+                    this.modal.dispose();
+                    this.modal = null;
+                }
+            );
+        }
     }
 };
