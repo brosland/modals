@@ -4,22 +4,53 @@ declare(strict_types=1);
 namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
-use Nette\Http\SessionSection;
+use Nette\Application\UI\Presenter;
 
 /**
  * @method void onClose(self $modal)
  */
 abstract class Modal extends Control
 {
-    public static string $VERSION = 'v4';
+    public static string $VERSION = 'v5';
 
-    /** @var callable[] */
+    /** @var array<callable> */
     public array $onClose = [];
     private bool $openRequired = false;
+    private ModalManager $modalManager;
+
+    public function __construct()
+    {
+        $this->onAnchor[] = [$this, 'init'];
+    }
+
+    public function init(): void
+    {
+        /** @var ModalManager $modalManager */
+        $modalManager = $this->lookup(ModalManager::class);
+        $this->modalManager = $modalManager;
+
+        /** @var Presenter $presenter */
+        $presenter = $this->getPresenter();
+        /** @var string|null $signalReceiverName */
+        [$signalReceiverName] = $presenter->getSignal();
+
+        if ($signalReceiverName !== null) {
+            $signalReceiver = $presenter->getComponent($signalReceiverName, false);
+
+            while ($signalReceiver !== null) {
+                if ($signalReceiver === $this) {
+                    $this->modalManager->setActiveModal($this);
+                    break;
+                }
+
+                $signalReceiver = $signalReceiver->getParent();
+            }
+        }
+    }
 
     public function isActive(): bool
     {
-        return $this->getModalManager()->getActiveModal() === $this;
+        return $this->modalManager->getActiveModal() === $this;
     }
 
     public function isOpenRequired(): bool
@@ -29,29 +60,21 @@ abstract class Modal extends Control
 
     public function open(): void
     {
-        $modalManager = $this->getModalManager();
-        $activeModal = $modalManager->getActiveModal();
-
-        if ($activeModal !== $this && $activeModal !== null) {
-            $activeModal->close();
-        }
-
-        $modalManager->setActiveModal($this);
-
+        $this->modalManager->setActiveModal($this);
         $this->openRequired = true;
     }
 
-    public function close(): void
+    public function close(bool $clearParams = true): void
     {
-        $modalManager = $this->getModalManager();
-
-        if ($modalManager->getActiveModal() === $this) {
-            $modalManager->setActiveModal(null);
+        if ($this->modalManager->getActiveModal() === $this) {
+            $this->modalManager->setActiveModal(null);
 
             $this->openRequired = false;
-            $this->getSession()['close'] = true;
-
             $this->onClose($this);
+        }
+
+        if ($clearParams) {
+            $this->clearParams();
         }
     }
 
@@ -74,22 +97,8 @@ abstract class Modal extends Control
         $template->modalTemplate = __DIR__ . '/Modal.' . self::$VERSION . '.latte';
     }
 
-    private function getModalManager(): ModalManager
+    protected function clearParams(): void
     {
-        /** @var ModalManager $control */
-        $control = $this->lookup(ModalManager::class);
-
-        return $control;
-    }
-
-    /**
-     * @return SessionSection<mixed>
-     */
-    private function getSession(): SessionSection
-    {
-        /** @var SessionSection<mixed> $section */
-        $section = $this->presenter->getSession(self::class);
-
-        return $section;
+        $this->params = [];
     }
 }

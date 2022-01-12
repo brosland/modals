@@ -7,5 +7,5 @@ interface ModalManager
 {
     function getActiveModal(): ?Modal;
 
-    function setActiveModal(Modal $modal = null): void;
+    function setActiveModal(?Modal $modal): void;
 }

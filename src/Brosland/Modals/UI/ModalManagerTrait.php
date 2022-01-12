@@ -5,18 +5,11 @@ namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Template;
-use Nette\InvalidArgumentException;
-use Nette\Utils\Random;
-use RuntimeException;
 
 trait ModalManagerTrait
 {
-    private static string $COOKIE_PREFIX = 'brosland_modals__';
-
-    /** @persistent */
-    public ?string $modal = null;
     private ?Modal $activeModal = null;
-    private bool $initialized = false;
+    private bool $closeActiveModal = false;
 
     public abstract function getPresenter(): ?Presenter;
 
@@ -24,106 +17,32 @@ trait ModalManagerTrait
 
     public function getActiveModal(): ?Modal
     {
-        if (!$this->initialized) {
-            $this->init();
-        }
-
         return $this->activeModal;
     }
 
     public function setActiveModal(Modal $modal = null): void
     {
-        if (!$this->initialized) {
-            $this->init();
+        if ($this->activeModal !== null && $this->activeModal !== $modal) {
+            $this->closeActiveModal = true;
         }
 
-        $presenter = $this->getPresenter();
-
-        if ($presenter === null) {
-            throw new RuntimeException('The component is not attached to the presenter.');
-        }
-
-        $httpResponse = $presenter->getHttpResponse();
-
-        if ($this->modal !== null) {
-            $httpResponse->deleteCookie(self::$COOKIE_PREFIX . $this->modal);
-
-            $this->modal = null;
-            $this->activeModal = null;
-        }
-
-        if ($modal !== null) {
-            $this->modal = Random::generate(6);
-            $this->activeModal = $modal;
-
-            $httpResponse->setCookie(
-                self::$COOKIE_PREFIX . $this->modal,
-                $modal->getUniqueId(),
-                '1 day'
-            );
-        }
+        $this->activeModal = $modal;
     }
 
     public function updateModal(): void
     {
-        if (!$this->initialized) {
-            $this->init();
-        }
-
-        /** @var Template $template */
         $template = $this->getTemplate();
-        $template->add('modal', $this->activeModal);
+        $template->modal = $this->activeModal;
 
+        /** @var Presenter $presenter */
         $presenter = $this->getPresenter();
-
-        if ($presenter === null) {
-            throw new RuntimeException('The component is not attached to the presenter.');
-        }
-
-        $session = $presenter->getSession(Modal::class);
-
-        $closeModal = isset($session['close']);
-        unset($session['close']);
 
         if ($presenter->isAjax()) {
-            $presenter->redrawControl(
-                'modal',
-                $this->activeModal !== null && $this->activeModal->isOpenRequired()
-            );
+            $presenter->redrawControl('modal', (bool)$this->activeModal?->isOpenRequired());
 
-            if ($closeModal) {
+            if ($this->closeActiveModal) {
                 $presenter->getPayload()->brosland_modals__closeModal = true;
             }
-        }
-    }
-
-    private function init(): void
-    {
-        $this->initialized = true;
-
-        if ($this->modal === null) {
-            return;
-        }
-
-        $presenter = $this->getPresenter();
-
-        if ($presenter === null) {
-            throw new RuntimeException('The component is not attached to the presenter.');
-        }
-
-        $httpRequest = $presenter->getHttpRequest();
-        $activeModalId = (string)$httpRequest->getCookie(self::$COOKIE_PREFIX . $this->modal);
-
-        try {
-            $control = $presenter->getComponent($activeModalId);
-
-            if (!$control instanceof Modal) {
-                throw new InvalidArgumentException();
-            }
-
-            $this->activeModal = $control;
-        } catch (InvalidArgumentException $e) {
-            $this->setActiveModal(null);
         }
     }
 }

@@ -11,13 +11,15 @@ use Nette\Application\UI\Form;
  */
 class ConfirmationModal extends Modal
 {
-    /** @var callable[] */
+    /** @var array<callable> */
     public array $onConfirm = [];
-    /** @var string|mixed  */
-    private $title, $question;
+    /** @var string|mixed */
+    private mixed $title, $question;
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->title = $this->prefix('confirmation');
         $this->question = $this->prefix('question');
     }
@@ -25,7 +27,7 @@ class ConfirmationModal extends Modal
     /**
      * @param string|mixed $title
      */
-    public function setTitle($title): void
+    public function setTitle(mixed $title): void
     {
         $this->title = $title;
     }
@@ -33,7 +35,7 @@ class ConfirmationModal extends Modal
     /**
      * @param string|mixed $question
      */
-    public function setQuestion($question): void
+    public function setQuestion(mixed $question): void
     {
         $this->question = $question;
     }
