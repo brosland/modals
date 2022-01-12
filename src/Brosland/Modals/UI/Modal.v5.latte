@@ -5,13 +5,25 @@
         <div n:inner-block="content" class="modal-content">
             <div n:inner-block="header" class="modal-header">
                 <h5 n:snippet="title" n:inner-block="title" class="modal-title"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                        aria-label="{_close}"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        title="{_close}"
+                        type="button"
+                ></button>
             </div>
             <div n:inner-block="body" n:snippet="body" class="modal-body">
                 <div n:block="flashes" n:snippet="flashes" n:inner-foreach="$flashes as $flashMessage">
                     <div class="alert alert-{$flashMessage->type} alert-dismissible" role="alert">
                         {_$flashMessage->message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button
+                                aria-label="{_close}"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                title="{_close}"
+                                type="button"
+                        ></button>
                     </div>
                 </div>
             </div>

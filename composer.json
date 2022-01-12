@@ -3,21 +3,20 @@
 	"type": "library",
 	"description": "The implementation of Bootstrap modals for Nette framework.",
 	"keywords": ["brosland", "modals", "bootstrap", "nette"],
-	"homepage": "http://bros.land",
 	"license": ["MIT"],
 	"authors": [],
 	"autoload": {
 		"classmap": ["src/"]
 	},
 	"require": {
-		"php": ">= 7.4",
-		"nette/application": "^3.0",
-		"nette/di": "^3.0",
-		"nette/forms": "^3.0",
-		"nette/utils": "^3.0"
+		"php": ">= 7.2|<8.2",
+		"nette/application": "*",
+		"nette/di": "*",
+		"nette/forms": "*",
+		"nette/utils": "*"
 	},
 	"require-dev": {
-		"tracy/tracy": "^2.6",
-		"phpstan/phpstan-nette": "^0.12"
+		"tracy/tracy": "*",
+		"phpstan/phpstan-nette": "*"
 	}
 }

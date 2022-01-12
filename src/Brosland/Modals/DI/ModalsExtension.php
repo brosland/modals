@@ -33,7 +33,7 @@ final class ModalsExtension extends CompilerExtension
     {
         parent::afterCompile($class);
 
-        /** @var mixed[] $config */
+        /** @var array<string,mixed> $config */
         $config = $this->getConfig();
 
         $initialize = $class->methods['initialize'];
