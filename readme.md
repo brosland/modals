@@ -19,7 +19,7 @@ This step you can skip if you use Bootstrap 4.
 
 ```neon
 brosland.modals:
-	version: 'v3' # default v4
+	version: 'v5'
 
 extensions:
 	brosland.modals: Brosland\Modals\DI\ModalsExtension
