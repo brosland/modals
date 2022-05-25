@@ -18,7 +18,7 @@ export default class ModalNajaExtension {
             (event) => {
                 if (
                     this.modal !== null &&
-                    event.detail.payload.hasOwnProperty('brosland_modals__closeModal')
+                    event.detail.payload?.hasOwnProperty('brosland_modals__closeModal')
                 ) {
                     this.modal.hide();
                 }
