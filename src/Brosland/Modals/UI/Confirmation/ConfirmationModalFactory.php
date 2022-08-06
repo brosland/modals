@@ -5,5 +5,5 @@ namespace Brosland\Modals\UI\Confirmation;
 
 interface ConfirmationModalFactory
 {
-    function create(): ConfirmationModal;
+	function create(): ConfirmationModal;
 }

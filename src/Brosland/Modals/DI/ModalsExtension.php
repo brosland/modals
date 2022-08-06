@@ -12,31 +12,31 @@ use Nette\Schema\Schema;
 
 final class ModalsExtension extends CompilerExtension
 {
-    public function getConfigSchema(): Schema
-    {
-        return Expect::structure([
-            'version' => Expect::string('v5')->dynamic()
-        ])->castTo('array');
-    }
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'version' => Expect::string('v5')->dynamic()
+		])->castTo('array');
+	}
 
-    public function loadConfiguration(): void
-    {
-        parent::loadConfiguration();
+	public function loadConfiguration(): void
+	{
+		parent::loadConfiguration();
 
-        $builder = $this->getContainerBuilder();
+		$builder = $this->getContainerBuilder();
 
-        $builder->addFactoryDefinition($this->prefix('confirmationModalFactory'))
-            ->setImplement(ConfirmationModalFactory::class);
-    }
+		$builder->addFactoryDefinition($this->prefix('confirmationModalFactory'))
+			->setImplement(ConfirmationModalFactory::class);
+	}
 
-    public function afterCompile(ClassType $class): void
-    {
-        parent::afterCompile($class);
+	public function afterCompile(ClassType $class): void
+	{
+		parent::afterCompile($class);
 
-        /** @var array<string,mixed> $config */
-        $config = $this->getConfig();
+		/** @var array<string,mixed> $config */
+		$config = $this->getConfig();
 
 		$initialize = $class->getMethod('initialize');
-        $initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
-    }
+		$initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
+	}
 }

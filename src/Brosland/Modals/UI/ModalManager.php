@@ -5,7 +5,7 @@ namespace Brosland\Modals\UI;
 
 interface ModalManager
 {
-    function getActiveModal(): ?Modal;
+	function getActiveModal(): ?Modal;
 
-    function setActiveModal(?Modal $modal): void;
+	function setActiveModal(?Modal $modal): void;
 }

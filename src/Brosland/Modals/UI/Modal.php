@@ -5,100 +5,97 @@ namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
+use Nette\ComponentModel\IComponent;
+use Tracy\Debugger;
 
 /**
  * @method void onClose(self $modal)
  */
 abstract class Modal extends Control
 {
-    public static string $VERSION = 'v5';
+	public static string $VERSION = 'v5';
 
-    /** @var array<callable> */
-    public array $onClose = [];
-    private bool $openRequired = false;
-    private ModalManager $modalManager;
+	/** @var array<callable> */
+	public array $onClose = [];
+	private bool $openRequired = false;
+	private ModalManager $modalManager;
 
-    public function __construct()
-    {
-        $this->onAnchor[] = [$this, 'init'];
-    }
+	public function __construct()
+	{
+		$this->onAnchor[] = [$this, 'init'];
+	}
 
-    public function init(): void
-    {
-        /** @var ModalManager $modalManager */
-        $modalManager = $this->lookup(ModalManager::class);
-        $this->modalManager = $modalManager;
+	public function init(): void
+	{
+		/** @var ModalManager $modalManager */
+		$modalManager = $this->lookup(ModalManager::class);
+		$this->modalManager = $modalManager;
 
-        /** @var Presenter $presenter */
-        $presenter = $this->getPresenter();
-        /** @var string|null $signalReceiverName */
-        [$signalReceiverName] = $presenter->getSignal();
+		/** @var Presenter $presenter */
+		$presenter = $this->getPresenter();
+		/** @var string|null $signalReceiverName */
+		[$signalReceiverName] = $presenter->getSignal();
 
-        if ($signalReceiverName !== null) {
-            $signalReceiver = $presenter->getComponent($signalReceiverName, false);
+		if ($signalReceiverName !== null) {
+			$signalReceiver = $presenter->getComponent($signalReceiverName, false);
 
-            while ($signalReceiver !== null) {
-                if ($signalReceiver === $this) {
-                    $this->modalManager->setActiveModal($this);
-                    break;
-                }
+			while ($signalReceiver !== null) {
+				if ($signalReceiver === $this) {
+					$this->modalManager->setActiveModal($this);
+					break;
+				}
 
-                $signalReceiver = $signalReceiver->getParent();
-            }
-        }
-    }
+				$signalReceiver = $signalReceiver->getParent();
+			}
+		}
+	}
 
-    public function isActive(): bool
-    {
-        return $this->modalManager->getActiveModal() === $this;
-    }
+	public function isActive(): bool
+	{
+		return $this->modalManager->getActiveModal() === $this;
+	}
 
-    public function isOpenRequired(): bool
-    {
-        return $this->openRequired;
-    }
+	public function isOpenRequired(): bool
+	{
+		return $this->openRequired;
+	}
 
-    public function open(): void
-    {
-        $this->modalManager->setActiveModal($this);
-        $this->openRequired = true;
-    }
+	public function open(): void
+	{
+		$this->modalManager->setActiveModal($this);
+		$this->openRequired = true;
+	}
 
-    public function close(bool $clearParams = true): void
-    {
-        if ($this->modalManager->getActiveModal() === $this) {
-            $this->modalManager->setActiveModal(null);
+	public function close(bool $remove = true): void
+	{
+		if ($this->modalManager->getActiveModal() === $this) {
+			$this->modalManager->setActiveModal(null);
 
-            $this->openRequired = false;
-            $this->onClose($this);
-        }
+			$this->openRequired = false;
+			$this->onClose($this);
+		}
 
-        if ($clearParams) {
-            $this->clearParams();
-        }
-    }
+		if ($remove) {
+			$this->getParent()?->removeComponent($this);
+		}
+	}
 
-    public function handleClose(): void
-    {
-        if ($this->isActive()) {
-            $this->close();
-        }
-    }
+	public function handleClose(): void
+	{
+		if ($this->isActive()) {
+			$this->close();
+		}
+	}
 
-    public function render(): void
-    {
-        $this->beforeRender();
-        $this->getTemplate()->render();
-    }
+	public function render(): void
+	{
+		$this->beforeRender();
+		$this->getTemplate()->render();
+	}
 
-    protected function beforeRender(): void
-    {
-        $template = $this->getTemplate();
-        $template->modalTemplate = __DIR__ . '/Modal.' . self::$VERSION . '.latte';
-    }
-
-    protected function clearParams(): void
-    {
-        $this->params = [];
-    }
+	protected function beforeRender(): void
+	{
+		$template = $this->getTemplate();
+		$template->modalTemplate = __DIR__ . '/Modal.' . self::$VERSION . '.latte';
+	}
 }
