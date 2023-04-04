@@ -15,7 +15,7 @@ final class ModalsExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'version' => Expect::string('v5')->dynamic()
+			'modalTemplate' => Expect::string()->dynamic()
 		])->castTo('array');
 	}
 
@@ -36,7 +36,9 @@ final class ModalsExtension extends CompilerExtension
 		/** @var array<string,mixed> $config */
 		$config = $this->getConfig();
 
-		$initialize = $class->getMethod('initialize');
-		$initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
+		if (isset($config['modalTemplate'])) {
+			$initialize = $class->getMethod('initialize');
+			$initialize->addBody(Modal::class . '::$MODAL_TEMPLATE = ?;', [$config['modalTemplate']]);
+		}
 	}
 }

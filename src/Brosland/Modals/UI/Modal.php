@@ -5,20 +5,17 @@ namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
-use Nette\ComponentModel\IComponent;
-use Tracy\Debugger;
 
 /**
  * @method void onClose(self $modal)
  */
 abstract class Modal extends Control
 {
-	public static string $VERSION = 'v5';
-
 	/** @var array<callable> */
 	public array $onClose = [];
 	private bool $openRequired = false;
 	private ModalManager $modalManager;
+	public static string $MODAL_TEMPLATE = __DIR__ . '/Modal.v5.latte';
 
 	public function __construct()
 	{
@@ -90,6 +87,6 @@ abstract class Modal extends Control
 	protected function beforeRender(): void
 	{
 		$template = $this->getTemplate();
-		$template->modalTemplate = __DIR__ . '/Modal.' . self::$VERSION . '.latte';
+		$template->modalTemplate = self::$MODAL_TEMPLATE;
 	}
 }
