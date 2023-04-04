@@ -36,17 +36,11 @@ abstract class Modal extends Control
 		/** @var string|null $signalReceiverName */
 		[$signalReceiverName] = $presenter->getSignal();
 
-		if ($signalReceiverName !== null) {
-			$signalReceiver = $presenter->getComponent($signalReceiverName, false);
-
-			while ($signalReceiver !== null) {
-				if ($signalReceiver === $this) {
-					$this->modalManager->setActiveModal($this);
-					break;
-				}
-
-				$signalReceiver = $signalReceiver->getParent();
-			}
+		if (
+			$signalReceiverName !== null &&
+			str_starts_with($signalReceiverName, $this->lookupPath())
+		) {
+			$this->modalManager->setActiveModal($this);
 		}
 	}
 
