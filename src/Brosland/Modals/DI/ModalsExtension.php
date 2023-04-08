@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Brosland\Modals\DI;
 
+use Brosland\Modals\UI\Confirmation\ConfirmationModal;
 use Brosland\Modals\UI\Confirmation\ConfirmationModalFactory;
 use Brosland\Modals\UI\Modal;
 use Nette\DI\CompilerExtension;
@@ -15,6 +16,7 @@ final class ModalsExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
+			'confirmationModalTemplate' => Expect::string()->dynamic(),
 			'modalTemplate' => Expect::string()->dynamic()
 		])->castTo('array');
 	}
@@ -35,10 +37,20 @@ final class ModalsExtension extends CompilerExtension
 
 		/** @var array<string,mixed> $config */
 		$config = $this->getConfig();
+		$initialize = $class->getMethod('initialize');
 
 		if (isset($config['modalTemplate'])) {
-			$initialize = $class->getMethod('initialize');
-			$initialize->addBody(Modal::class . '::$MODAL_TEMPLATE = ?;', [$config['modalTemplate']]);
+			$initialize->addBody(
+				Modal::class . '::$MODAL_TEMPLATE = ?;',
+				[$config['modalTemplate']]
+			);
+		}
+
+		if (isset($config['confirmationModalTemplate'])) {
+			$initialize->addBody(
+				ConfirmationModal::class . '::$CONFIRMATION_MODAL_TEMPLATE = ?;',
+				[$config['confirmationModalTemplate']]
+			);
 		}
 	}
 }

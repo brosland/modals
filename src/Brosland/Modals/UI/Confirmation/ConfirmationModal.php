@@ -15,6 +15,7 @@ class ConfirmationModal extends Modal
 	public array $onConfirm = [];
 	/** @var string|mixed */
 	private mixed $title, $question;
+	public static string $CONFIRMATION_MODAL_TEMPLATE = __DIR__ . '/ConfirmationModal.latte';
 
 	public function __construct()
 	{
@@ -45,11 +46,12 @@ class ConfirmationModal extends Modal
 		parent::beforeRender();
 
 		$template = $this->getTemplate();
+		$template->setFile(self::$CONFIRMATION_MODAL_TEMPLATE);
+
 		$template->title = $this->title;
 		$template->question = $this->question;
 		$template->cancelLabel = $this->prefix('cancel');
 		$template->confirmLabel = $this->prefix('confirm');
-		$template->setFile(__DIR__ . '/ConfirmationModal.latte');
 	}
 
 	private function prefix(string $value): string
@@ -64,14 +66,10 @@ class ConfirmationModal extends Modal
 		$form = new Form();
 
 		$cancelButton = $form->addSubmit('cancel');
-		$cancelButton->onClick[] = function (): void {
-			$this->close();
-		};
+		$cancelButton->onClick[] = fn() => $this->close();
 
 		$confirmButton = $form->addSubmit('confirm');
-		$confirmButton->onClick[] = function (): void {
-			$this->onConfirm($this);
-		};
+		$confirmButton->onClick[] = fn() => $this->onConfirm($this);
 
 		return $form;
 	}
