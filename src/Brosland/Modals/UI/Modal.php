@@ -57,17 +57,13 @@ abstract class Modal extends Control
 		$this->openRequired = true;
 	}
 
-	public function close(bool $remove = true): void
+	public function close(): void
 	{
 		if ($this->modalManager->getActiveModal() === $this) {
 			$this->modalManager->setActiveModal(null);
 
 			$this->openRequired = false;
 			$this->onClose($this);
-		}
-
-		if ($remove) {
-			$this->getParent()?->removeComponent($this);
 		}
 	}
 
