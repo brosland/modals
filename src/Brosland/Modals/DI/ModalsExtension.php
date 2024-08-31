@@ -36,7 +36,7 @@ final class ModalsExtension extends CompilerExtension
         /** @var array<string,mixed> $config */
         $config = $this->getConfig();
 
-        $initialize = $class->methods['initialize'];
+        $initialize = $class->getMethod('initialize');
         $initialize->addBody(Modal::class . '::$VERSION = ?;', [$config['version']]);
     }
 }
