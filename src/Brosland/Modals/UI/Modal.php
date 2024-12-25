@@ -5,6 +5,7 @@ namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 
 /**
  * @method void onClose(self $modal)
@@ -30,13 +31,10 @@ abstract class Modal extends Control
 
 		/** @var Presenter $presenter */
 		$presenter = $this->getPresenter();
-		/** @var string|null $signalReceiverName */
-		[$signalReceiverName] = $presenter->getSignal();
+		/** @var array<string>|null $signal */
+		$signal = $presenter->getSignal();
 
-		if (
-			$signalReceiverName !== null &&
-			str_starts_with($signalReceiverName, $this->lookupPath())
-		) {
+		if ($signal !== null && str_starts_with($signal[0], $this->lookupPath())) {
 			$this->modalManager->setActiveModal($this);
 		}
 	}
@@ -86,7 +84,8 @@ abstract class Modal extends Control
 
 	protected function beforeRender(): void
 	{
+		/** @var DefaultTemplate $template */
 		$template = $this->getTemplate();
-		$template->modalTemplate = self::$MODAL_TEMPLATE;
+		$template->setParameters(['modalTemplate' => self::$MODAL_TEMPLATE]);
 	}
 }

@@ -5,6 +5,7 @@ namespace Brosland\Modals\UI\Confirmation;
 
 use Brosland\Modals\UI\Modal;
 use Nette\Application\UI\Form;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 
 /**
  * @method void onConfirm(self $modal)
@@ -45,13 +46,16 @@ class ConfirmationModal extends Modal
 	{
 		parent::beforeRender();
 
+		/** @var DefaultTemplate $template */
 		$template = $this->getTemplate();
 		$template->setFile(self::$CONFIRMATION_MODAL_TEMPLATE);
 
-		$template->title = $this->title;
-		$template->question = $this->question;
-		$template->cancelLabel = $this->prefix('cancel');
-		$template->confirmLabel = $this->prefix('confirm');
+		$template->setParameters([
+			'title' => $this->title,
+			'question' => $this->question,
+			'cancelLabel' => $this->prefix('cancel'),
+			'confirmLabel' => $this->prefix('confirm')
+		]);
 	}
 
 	private function prefix(string $value): string

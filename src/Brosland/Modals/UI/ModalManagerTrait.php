@@ -5,6 +5,7 @@ namespace Brosland\Modals\UI;
 
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Template;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 
 trait ModalManagerTrait
 {
@@ -31,8 +32,9 @@ trait ModalManagerTrait
 
 	public function updateModal(): void
 	{
+		/** @var DefaultTemplate $template */
 		$template = $this->getTemplate();
-		$template->modal = $this->activeModal;
+		$template->setParameters(['modal' => $this->activeModal]);
 
 		/** @var Presenter $presenter */
 		$presenter = $this->getPresenter();

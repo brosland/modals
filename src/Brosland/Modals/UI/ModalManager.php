@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Brosland\Modals\UI;
 
-interface ModalManager
+use Nette\ComponentModel\IComponent;
+
+interface ModalManager extends IComponent
 {
 	function getActiveModal(): ?Modal;
 
