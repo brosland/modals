@@ -21,7 +21,7 @@ trait ModalManagerTrait
 		return $this->activeModal;
 	}
 
-	public function setActiveModal(Modal $modal = null): void
+	public function setActiveModal(?Modal $modal = null): void
 	{
 		if ($this->activeModal !== null && $this->activeModal !== $modal) {
 			$this->closeActiveModal = true;
